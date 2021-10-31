@@ -20,7 +20,8 @@ async function run (){
     try{
         await client.connect();
         const database = client.db('travel_booking');
-        const packagesCollection = database.collection('packages')
+        const packagesCollection = database.collection('packages');
+        const ordersCollection = database.collection('orders');
 
         // Get pacakges api
         app.get('/packages', async(req, res)=>{
@@ -42,7 +43,22 @@ async function run (){
             const package = req.body;
             const result = await packagesCollection.insertOne(package);
             res.json(result);
-        })
+        });
+
+        // add order api
+        app.post('/orders', async(req, res)=>{
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.json(result);
+        });
+
+         // Get orders api
+         app.get('/orders', async(req, res)=>{
+            console.log(orders);
+            const cursor = ordersCollection.find({});
+            const orders = await cursor.toArray();
+            res.send(orders);
+        });
 
     }
     finally{
