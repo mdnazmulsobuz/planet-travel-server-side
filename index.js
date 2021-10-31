@@ -1,7 +1,9 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
-require('dotenv').config();
+const ObjectId = require('mongodb').ObjectId;
+
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 require('dotenv').config();
@@ -14,13 +16,26 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jo3sa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
  
-console.log(uri);
-
 async function run (){
     try{
         await client.connect();
         const database = client.db('travel_booking');
         const packagesCollection = database.collection('packages')
+
+        // Get pacakges api
+        app.get('/packages', async(req, res)=>{
+            const cursor = packagesCollection.find({});
+            const packages = await cursor.toArray();
+            res.send(packages);
+        });
+
+        // get single package 
+        app.get('/packages/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const package = await packagesCollection.findOne(query);
+            res.json(package);
+        });
 
         // post api
         app.post('/packages', async(req,res)=>{
@@ -28,14 +43,7 @@ async function run (){
             const result = await packagesCollection.insertOne(package);
             res.json(result);
         })
-        
 
-        // Get pacakges api
-        app.get('/packages', async(req, res)=>{
-            const cursor = packagesCollection.find({});
-            const packages = await cursor.toArray();
-            res.send(packages);
-        })
     }
     finally{
         // await client.close();
