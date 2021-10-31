@@ -55,6 +55,9 @@ run().catch(console.dir);
 app.get('/', (req, res) =>{
     res.send('Planet Travel Server is running');
 });
+app.get('/hello', (req, res) =>{
+    res.send('Hello heorku');
+});
 
 app.listen(port, ()=>{
     console.log('Server running at port', port);
