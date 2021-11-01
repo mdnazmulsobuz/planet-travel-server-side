@@ -45,6 +45,13 @@ async function run (){
             res.json(result);
         });
 
+        //  Get orders api
+        app.get('/orders', async(req, res)=>{
+            const cursor = ordersCollection.find({});
+            const orders = await cursor.toArray();
+            res.send(orders);
+        });
+
         // add order api
         app.post('/orders', async(req,res)=>{
             const order = req.body;
@@ -52,12 +59,14 @@ async function run (){
             res.json(result);
         });
 
-        //  Get orders api
-         app.get('/orders', async(req, res)=>{
-            const cursor = ordersCollection.find({});
-            const orders = await cursor.toArray();
-            res.send(orders);
-        });
+        // delete order api
+        app.delete('/orders/:id', async (req, res) =>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(query);
+            res.json(result);
+        } )
+
 
     }
     finally{
