@@ -65,9 +65,24 @@ async function run (){
             const query = { _id: ObjectId(id) };
             const result = await ordersCollection.deleteOne(query);
             res.json(result);
-        } )
+        } );
 
+       // get single package 
+       app.get('/orders/:', async(req, res) =>{
+        const id = req.params.id;
+        const query = {_id: ObjectId(id)};
+        const package = await packagesCollection.findOne(query);
+        res.json(package);
+    });
+      
 
+    // my order api 
+    app.get('/orders/:email', async (req, res) =>{
+        const result = await ordersCollection.find({email: req.params.email}).toArray();
+        res.send(result);
+    });
+
+  
     }
     finally{
         // await client.close();
